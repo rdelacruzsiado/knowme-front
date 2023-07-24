@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Box, Button, Link, Stack, TextField, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 import api from "../../api";
 
 const Register = () => {
+  const navigate = useNavigate();
   const [submitError, setSubmitError] = useState("");
 
   const formik = useFormik({
@@ -27,7 +29,7 @@ const Register = () => {
     onSubmit: async (values) => {
       try {
         await api.post("/auth/signup", values);
-        console.log("Registro de usuario:", values);
+        navigate("/sign-in");
       } catch (err) {
         setSubmitError(err.message);
       }
