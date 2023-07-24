@@ -1,8 +1,13 @@
+import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Box, Button, Link, Stack, TextField, Typography } from "@mui/material";
 
+import api from "../../api";
+
 const Register = () => {
+  const [submitError, setSubmitError] = useState("");
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -19,6 +24,14 @@ const Register = () => {
         .required("Campo requerido"),
       password: Yup.string().max(255).required("Campo requerido"),
     }),
+    onSubmit: async (values) => {
+      try {
+        await api.post("/auth/signup", values);
+        console.log("Registro de usuario:", values);
+      } catch (err) {
+        setSubmitError(err.message);
+      }
+    },
   });
 
   return (
@@ -93,6 +106,11 @@ const Register = () => {
                 value={formik.values.password}
               />
             </Stack>
+            {submitError && (
+              <Typography color="error" sx={{ mt: 3 }} variant="body2">
+                {submitError}
+              </Typography>
+            )}
             <Button
               fullWidth
               size="large"
