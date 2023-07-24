@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { Box, Button, Stack, TextField, Typography, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import api from "../../api";
 
 const validationSchema = yup.object({
   email: yup.string().required("Campo requerido"),
@@ -11,14 +12,7 @@ const validationSchema = yup.object({
 
 const Login = () => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    if (isLoggedIn) {
-      navigate("/");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const [submitError, setSubmitError] = useState("");
 
   const formik = useFormik({
     initialValues: {
@@ -26,6 +20,14 @@ const Login = () => {
       password: "",
     },
     validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      try {
+        await api.post("/auth/login", values);
+        navigate("/");
+      } catch (err) {
+        setSubmitError(err.message);
+      }
+    },
   });
 
   return (
@@ -84,6 +86,11 @@ const Login = () => {
                   value={formik.values.password}
                 />
               </Stack>
+              {submitError && (
+                <Typography color="error" sx={{ mt: 3 }} variant="body2">
+                  {submitError}
+                </Typography>
+              )}
               <Button
                 fullWidth
                 size="large"
