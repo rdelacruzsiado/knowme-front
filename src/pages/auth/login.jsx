@@ -23,6 +23,7 @@ const Login = () => {
     onSubmit: async (values) => {
       try {
         await api.post("/auth/login", values);
+        localStorage.setItem("isLoggedIn", "true");
         navigate("/");
       } catch (err) {
         setSubmitError(err.message);

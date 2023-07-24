@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { TopNav } from "./top-nav";
 
 const SIDE_NAV_WIDTH = 280;
@@ -23,6 +23,7 @@ const LayoutContainer = styled("div")({
 
 export const HomeLayout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [openNav, setOpenNav] = useState(false);
 
   const handlePathnameChange = useCallback(() => {
@@ -38,6 +39,14 @@ export const HomeLayout = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [location]
   );
+
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (!isLoggedIn) {
+      navigate("/sign-in");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
